@@ -16,7 +16,8 @@ colorDivs.forEach((div, index) => {
 });
 
 // Functions
-// generateHex function generates a random color hex starting with '#' and then 6 random characters
+
+// generates a random color hex starting with '#' and then 6 random characters
 function generateHex() {
   const letters = "0123456789ABCDEF";
   let hash = "#";
@@ -28,9 +29,13 @@ function generateHex() {
 
 // randomColors function generates a random hex number for each of the ".color" divs
 function randomColors() {
+  initialColors = [];
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
     const randomColor = generateHex();
+    // add it to the initialColors array
+    initialColors.push(chroma(randomColor).hex());
+    // initialColors.push(hexText.innerText);
 
     // add the color to background of div
     div.style.backgroundColor = randomColor;
@@ -95,7 +100,7 @@ function hslControls(event) {
   const brightness = sliders[1];
   const saturation = sliders[2];
 
-  const bgColor = colorDivs[index].querySelector("h2").innerText;
+  const bgColor = initialColors[index];
 
   let color = chroma(bgColor)
     .set("hsl.s", saturation.value)
