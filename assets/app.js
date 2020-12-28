@@ -1,9 +1,19 @@
 // Global selections and variables
 const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector(".generate");
-const sliders = document.querySelectorAll("input[type='range']");
+const sliders = document.querySelectorAll('input[type="range"]');
 const currentHexes = document.querySelectorAll(".color h2");
 let initialColors;
+
+// add our event listeners
+sliders.forEach((slider) => {
+  slider.addEventListener("input", hslControls);
+});
+colorDivs.forEach((div, index) => {
+  div.addEventListener("change", () => {
+    updateTextUI(index);
+  });
+});
 
 // Functions
 // generateHex function generates a random color hex starting with '#' and then 6 random characters
@@ -51,6 +61,7 @@ function checkTextContrast(color, text) {
   }
 }
 
+// colorizes the input control sliders depending on the hex number
 function colorizeSliders(color, hue, brightness, saturation) {
   // scale saturation
   const noSat = color.set("hsl.s", 0);
@@ -68,6 +79,46 @@ function colorizeSliders(color, hue, brightness, saturation) {
     0
   )}, ${scaleBright(0.5)}, ${scaleBright(1)})`;
   hue.style.backgroundImage = `linear-gradient(to right, rgb(204, 75, 75), rgb(204, 204, 75), rgb(75, 204, 75), rgb(75,204, 204), rgb(75, 75, 204), rgb(204, 75, 204), rgb(204, 75, 75))`;
+}
+
+// controls for brightness, hue, and saturation
+function hslControls(event) {
+  const index =
+    event.target.getAttribute("data-bright") ||
+    event.target.getAttribute("data-sat") ||
+    event.target.getAttribute("data-hue");
+
+  let sliders = event.target.parentElement.querySelectorAll(
+    'input[type="range"]'
+  );
+  const hue = sliders[0];
+  const brightness = sliders[1];
+  const saturation = sliders[2];
+
+  const bgColor = colorDivs[index].querySelector("h2").innerText;
+
+  let color = chroma(bgColor)
+    .set("hsl.s", saturation.value)
+    .set("hsl.l", brightness.value)
+    .set("hsl.h", hue.value);
+
+  colorDivs[index].style.backgroundColor = color;
+}
+
+//updates the hex text when the slider values are changed
+function updateTextUI(index) {
+  const activeDiv = colorDivs[index];
+  const color = chroma(activeDiv.style.backgroundColor);
+  const textHex = activeDiv.querySelector("h2");
+  const icons = activeDiv.querySelectorAll(".controls button");
+  textHex.innerText = color.hex();
+
+  //check text contrast and chnage color accordingly
+  checkTextContrast(color, textHex);
+  //change color of icons with text
+  for (icon of icons) {
+    checkTextContrast(color, icon);
+  }
 }
 
 randomColors();
