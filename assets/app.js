@@ -1,12 +1,18 @@
-// Global selections and variables
+// Global Selections and Variables
 const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector(".generate");
 const sliders = document.querySelectorAll('input[type="range"]');
 const currentHexes = document.querySelectorAll(".color h2");
 const popup = document.querySelector(".copy-container");
+const adjustBtn = document.querySelectorAll(".adjust");
+const lockBtn = document.querySelectorAll(".lock");
+const closeAjustments = document.querySelectorAll(".close-adjustment");
+const sliderContainers = document.querySelectorAll(".sliders");
 let initialColors;
 
-// add our event listeners
+// Event Listeners
+generateBtn.addEventListener("click", randomColors);
+
 sliders.forEach((slider) => {
   slider.addEventListener("input", hslControls);
 });
@@ -27,6 +33,18 @@ popup.addEventListener("transitionend", () => {
   const popupBox = popup.children[0];
   popupBox.classList.remove("active");
   popup.classList.remove("active");
+});
+
+adjustBtn.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    openAdjustmentPanel(index);
+  });
+});
+
+closeAjustments.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    closeAdjustmentPanel(index);
+  });
 });
 
 // Functions
@@ -70,6 +88,12 @@ function randomColors() {
   });
   // reset inputs
   resetInputs();
+
+  // check icon/button contrast
+  adjustBtn.forEach((button, index) => {
+    checkTextContrast(initialColors[index], button);
+    checkTextContrast(initialColors[index], lockBtn[index]);
+  });
 }
 
 // changes the color of text depending on the contrast of the color using the chroma library
@@ -179,6 +203,13 @@ function copyToClipboard(hex) {
   const popupBox = popup.children[0];
   popup.classList.add("active");
   popupBox.classList.add("active");
+}
+
+function openAdjustmentPanel(index) {
+  sliderContainers[index].classList.toggle("active");
+}
+function closeAdjustmentPanel(index) {
+  sliderContainers[index].classList.remove("active");
 }
 
 randomColors();
