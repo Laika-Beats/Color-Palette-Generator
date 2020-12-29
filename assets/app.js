@@ -276,7 +276,14 @@ function savePalette(event) {
   });
 
   // generate object
-  let paletteNum = savedPalettes.length;
+  let paletteNum;
+  const paletteObjects = JSON.parse(localStorage.getItem("palettes"));
+  if (paletteObjects) {
+    paletteNum = paletteObjects.length;
+  } else {
+    paletteNum = savedPalettes.length;
+  }
+
   const paletteObj = { name, colors, num: paletteNum };
   savedPalettes.push(paletteObj);
 
@@ -307,7 +314,8 @@ function savePalette(event) {
     closeLibrary();
     const paletteIndex = event.target.classList[1];
     initialColors = [];
-    savedPalettes[paletteIndex].colors.forEach((color, index) => {
+    const paletteObjects = JSON.parse(localStorage.getItem("palettes"));
+    paletteObjects[paletteIndex].colors.forEach((color, index) => {
       initialColors.push(color);
       colorDivs[index].style.backgroundColor = color;
       const text = colorDivs[index].children[0];
@@ -348,7 +356,7 @@ function closeLibrary() {
 
 function getLocal() {
   if (localStorage.getItem("palettes") === null) {
-    localStorage = [];
+    localPalettes = [];
   } else {
     const paletteObjects = JSON.parse(localStorage.getItem("palettes"));
     paletteObjects.forEach((paletteObj) => {
